@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { SignedIn, SignedOut, useAuth } from '@clerk/clerk-react';
-import { supabase } from './lib/supabaseClient';
+import { createSupabaseClient } from './lib/supabaseClient';
 
 import './styles/App.css';
 
@@ -16,7 +16,9 @@ const Example = () => {
       const token = await getToken({ template: 'supabase' });
       setResponse(token);
     } catch (e) {
-      setResponse('// There was an error with the request. Please contact support@clerk.dev');
+      setResponse(
+        '// There was an error with the request. Please contact support@clerk.dev'
+      );
     }
   };
 
@@ -26,8 +28,7 @@ const Example = () => {
     try {
       // TODO: Update with your JWT template name
       const token = await getToken({ template: 'supabase' });
-
-      supabase.auth.setAuth(token);
+      const supabase = createSupabaseClient(token);
 
       const { data } = await supabase.from('your_table').select();
       const body = data ? JSON.stringify(data, null, '  ') : 'No data returned';
